@@ -1,28 +1,29 @@
 'use strict';
 
-var gulp = require('gulp'),
+const gulp = require('gulp'),
 sass = require('gulp-sass'),
 rigger = require('gulp-rigger'),
 watch = require('gulp-watch'),
 notify = require("gulp-notify"),
-browserSync = require('browser-sync').create();
+browserSync = require('browser-sync').create(),
+image = require('gulp-image');
 var path = {
-    build: { //Тут мы укажем куда складывать готовые после сборки файлы
+    build: {
         html: 'build/',
         js: 'build/js/',
         css: 'build/css/',
         img: 'build/img/',
         fonts: 'build/fonts/'
     },
-    src: { //Пути откуда брать исходники
-        html: 'src/*.html', //Синтаксис src/*.html говорит gulp что мы хотим взять все файлы с расширением .html
-        js: 'src/js/**/*.js',//В стилях и скриптах нам понадобятся только main файлы
+    src: {
+        html: 'src/*.html',
+        js: 'src/js/**/*.js',
         style: 'src/css/*.scss',
         css: 'src/css/**/*.css',
-        img: 'src/img/**/*.*', //Синтаксис img/**/*.* означает - взять все файлы всех расширений из папки и из вложенных каталогов
+        img: 'src/img/**/*.*',
         fonts: 'src/fonts/**/*.*'
     },
-     watch: { //Тут мы укажем, за изменением каких файлов мы хотим наблюдать
+     watch: {
         html: 'src/**/*.html',
         js: 'src/js/**/*.js',
         style: 'src/css/**/*.scss',
@@ -32,10 +33,10 @@ var path = {
     },
 };
 function html() {
-	gulp.src(path.src.html) //Выберем файлы по нужному пути
+	gulp.src(path.src.html) 
         .pipe(rigger())
-        .pipe(browserSync.stream()) //Прогоним через rigger
-        .pipe(gulp.dest(path.build.html)); //Выплюнем их в папку build
+        .pipe(browserSync.stream())
+        .pipe(gulp.dest(path.build.html));
 }
 function scss() {
 	gulp.src(path.src.style)
@@ -44,18 +45,20 @@ function scss() {
             message: "<%= error.message %>",
             title  : "Sass Error!"
           } ) ))
-        .pipe(browserSync.stream()) //Скомпилируем
-        .pipe(rigger()) //Прогоним через rigger
+        .pipe(browserSync.stream()) 
+        .pipe(rigger()) 
         .pipe(gulp.dest(path.build.css));
 }
 function css() {
 	gulp.src(path.src.css)
-        .pipe(browserSync.stream()) //Скомпилируем
-        .pipe(rigger()) //Прогоним через rigger
+        .pipe(browserSync.stream())
+        .pipe(rigger()) 
         .pipe(gulp.dest(path.build.css));
 }
 function img() {
-	gulp.src(path.src.img) //Выберем наши картинки
+	gulp.src(path.src.img)
+        .pipe(image())
+        .pipe(browserSync.stream())
         .pipe(gulp.dest(path.build.img));
 }
 function fnt() {
