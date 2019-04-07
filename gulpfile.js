@@ -6,7 +6,10 @@ rigger = require('gulp-rigger'),
 watch = require('gulp-watch'),
 notify = require("gulp-notify"),
 browserSync = require('browser-sync').create(),
-image = require('gulp-image');
+image = require('gulp-image'),
+htmlmin = require('gulp-htmlmin'),
+cleanCSS = require('gulp-clean-css'),
+minify = require('gulp-minify');
 var path = {
     build: {
         html: 'build/',
@@ -36,6 +39,7 @@ function html() {
 	gulp.src(path.src.html) 
         .pipe(rigger())
         .pipe(browserSync.stream())
+        .pipe(htmlmin({ collapseWhitespace: true }))
         .pipe(gulp.dest(path.build.html));
 }
 function scss() {
@@ -47,12 +51,14 @@ function scss() {
           } ) ))
         .pipe(browserSync.stream()) 
         .pipe(rigger()) 
+        .pipe(cleanCSS()) 
         .pipe(gulp.dest(path.build.css));
 }
 function css() {
 	gulp.src(path.src.css)
         .pipe(browserSync.stream())
         .pipe(rigger()) 
+        .pipe(cleanCSS()) 
         .pipe(gulp.dest(path.build.css));
 }
 function img() {
@@ -69,6 +75,7 @@ function js() {
 	gulp.src(path.src.js)
     .pipe(browserSync.stream())
         .pipe(rigger())
+        .pipe(minify())
         .pipe(gulp.dest(path.build.js))
         .on( 'error', notify.onError(
           {
@@ -105,4 +112,7 @@ gulp.task('default', function(){
     watch([path.watch.fonts], function(event, cb) {
         fnt();
     });
+});
+gulp.task('prod', function(){
+    html();scss();css();js();img();fnt();
 });
